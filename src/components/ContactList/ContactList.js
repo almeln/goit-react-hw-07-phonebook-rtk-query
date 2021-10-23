@@ -1,16 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import css from './ContactList.module.css';
-import { useSelector, useDispatch } from 'react-redux';
-import { deleteContact } from 'redux/contacts/contacts-operations';
-import { getVisibleContacts } from 'redux/contacts/contacts-selectors';
 
 import ContactItem from 'components/ContactItem';
+import { useDeleteContactMutation } from 'redux/contacts/contacts-slice';
 
-const ContactList = () => {
-  const contacts = useSelector(getVisibleContacts);
-  const dispatch = useDispatch();
+const ContactList = ({ contacts }) => {
 
-  const onDeleteContact = id => dispatch(deleteContact(id));
+  const [deleteContact] = useDeleteContactMutation();
 
   return (
     <ul>
@@ -19,12 +16,18 @@ const ContactList = () => {
           <ContactItem
             name={name}
             number={number}
-            onDelete={() => onDeleteContact(id)}
+            id={id}
+            // onDelete={() => onDeleteContact(id)}
+            onDelete={deleteContact}
           />
         </li>
       ))}
     </ul>
   );
+};
+
+ContactList.propTypes = {
+  contacts: PropTypes.array,
 };
 
 export default ContactList;

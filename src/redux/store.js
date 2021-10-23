@@ -1,63 +1,53 @@
-// import { combineReducers } from 'redux';
-import { configureStore } from '@reduxjs/toolkit';
-import {
-  // persistStore,
-  // persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
-} from 'redux-persist';
-import logger from 'redux-logger';
-// import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
-import { contactsReducer } from './contacts/contacts-reducer';
-
-// const persistConfig = {
-//   key: 'root',
-//   storage,
-// }
-
-const middleware = getDefaultMiddleware => [
-  ...getDefaultMiddleware({
-    serializableCheck: {
-      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-    },
-  }),
-  logger,
-];
-
-// const rootReducer = combineReducers({
-//   contacts: contactsReducer,
-// });
+import { configureStore } from '@reduxjs/toolkit'
+// Or from '@reduxjs/toolkit/query/react'
+import { setupListeners } from '@reduxjs/toolkit/query'
+import { contactsApi } from './contacts/contacts-slice'
 
 export const store = configureStore({
   reducer: {
-    contacts: contactsReducer,
+    // Add the generated reducer as a specific top-level slice
+    [contactsApi.reducerPath]: contactsApi.reducer,
   },
-  middleware,
-  devTools: process.env.NODE_ENV === 'development',
+  // Adding the api middleware enables caching, invalidation, polling,
+  // and other useful features of `rtk-query`.
+  middleware: (getDefaultMiddleware) => [
+    ...getDefaultMiddleware(),
+    contactsApi.middleware,
+  ],
 });
 
-// export const persistor = persistStore(store);
+// optional, but required for refetchOnFocus/refetchOnReconnect behaviors
+// see `setupListeners` docs - takes an optional callback as the 2nd arg for customization
+setupListeners(store.dispatch);
 
-export default store;
 
-// Использование Локал страредж
+// import { configureStore } from '@reduxjs/toolkit';
+// import {
+//   FLUSH,
+//   REHYDRATE,
+//   PAUSE,
+//   PERSIST,
+//   PURGE,
+//   REGISTER,
+// } from 'redux-persist';
+// import logger from 'redux-logger';
+// import { contactsReducer } from './contacts/contacts-reducer';
 
-// const contactsPersistConfig = {
-//   key: 'contacts',
-//   storage,
-//   blacklist: ['filter'],
-// };
+// const middleware = getDefaultMiddleware => [
+//   ...getDefaultMiddleware({
+//     serializableCheck: {
+//       ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+//     },
+//   }),
+//   logger,
+// ];
 
 // export const store = configureStore({
 //   reducer: {
-//     contacts: persistReducer(contactsPersistConfig, contactsReducer),
+//     contacts: contactsReducer,
 //   },
 //   middleware,
 //   devTools: process.env.NODE_ENV === 'development',
 // });
 
-// export const persistor = persistStore(store);
+// export default store;

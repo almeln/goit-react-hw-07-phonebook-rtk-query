@@ -1,15 +1,8 @@
 import React from 'react';
 import css from './Filter.module.css';
-// import PropTypes from 'prop-types';
-// import { connect } from 'react-redux';
-import { useSelector, useDispatch } from 'react-redux';
+import PropTypes from 'prop-types';
 
-import { changeFilter } from 'redux/contacts/contacts-actions';
-import { getFilter } from 'redux/contacts/contacts-selectors';
-
-const Filter = () => {
-  const filter = useSelector(getFilter);
-  const dispatch = useDispatch();
+const Filter = ({ value, onChange }) => {
 
   return (
     <label>
@@ -17,25 +10,16 @@ const Filter = () => {
       <input
         className={css.filterInput}
         type="text"
-        value={filter}
-        onChange={event => dispatch(changeFilter(event.target.value))}
+        value={value}
+        onChange={onChange}
       />
     </label>
   );
 };
 
-// const mapStateToProps = state => ({
-//   value: state.contacts.filter,
-// });
+Filter.propTypes = {
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+};
 
-// const mapDispatchToProps = dispatch => ({
-//   onChange: event => dispatch(changeFilter(event.target.value)),
-// });
-
-// Filter.propTypes = {
-//   value: PropTypes.string.isRequired,
-//   onChange: PropTypes.func.isRequired,
-// };
-
-// export default connect(mapStateToProps, mapDispatchToProps)(Filter);
 export default Filter;
